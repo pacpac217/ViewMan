@@ -92,8 +92,8 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         let rtcFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: ._0, timeStampNs: timeStampNs)
         
         self.videoSource?.adaptOutputFormat(toWidth: Int32(width), height: Int32(height), fps: 30)
-        if let capturer = self.videoCapturer {
-            self.videoSource?.capturer(capturer, didCapture: rtcFrame)
+        if let capturer = self.videoCapturer, let delegate = self.videoSource as? RTCVideoCapturerDelegate {
+            delegate.capturer(capturer, didCapture: rtcFrame)
         }
     }
     
@@ -224,19 +224,6 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceGatheringState) {}
     
-    func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCPeerConnectionState) {
-        DispatchQueue.main.async {
-            self.onConnectionStateChange?(newState)
-            switch newState {
-            case .connected:
-                self.onLog?("Đã kết nối trực tiếp P2P với Chrome!")
-            case .disconnected, .failed:
-                self.onLog?("Đã ngắt kết nối.")
-            default:
-                break
-            }
-        }
-    }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
         let payload: [String: Any] = [
