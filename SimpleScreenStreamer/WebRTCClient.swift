@@ -13,6 +13,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     private var peerConnection: RTCPeerConnection?
     private var videoSource: RTCVideoSource?
     private var videoTrack: RTCVideoTrack?
+    private var videoCapturer: RTCVideoCapturer?
     
     var roomCode: String = ""
     var onConnectionStateChange: ((RTCPeerConnectionState) -> Void)?
@@ -25,6 +26,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         super.init()
         self.videoSource = Self.factory.videoSource()
         self.videoTrack = Self.factory.videoTrack(with: self.videoSource!, trackId: "video0")
+        self.videoCapturer = RTCVideoCapturer(delegate: self.videoSource!)
     }
     
     func start(roomCode: String) {
@@ -90,7 +92,9 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         let rtcFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: ._0, timeStampNs: timeStampNs)
         
         self.videoSource?.adaptOutputFormat(toWidth: Int32(width), height: Int32(height), fps: 30)
-        self.videoSource?.capturer(RTCVideoCapturer(), didCapture: rtcFrame)
+        if let capturer = self.videoCapturer {
+            self.videoSource?.capturer(capturer, didCapture: rtcFrame)
+        }
     }
     
     // MARK: - Signaling via ntfy.sh
@@ -200,6 +204,8 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove stream: RTCMediaStream) {}
     
     func peerConnectionShouldTriggerIceRestart(_ peerConnection: RTCPeerConnection) -> Bool { return true }
+    
+    func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {}
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
         self.onLog?("ICE Connection State: \(newState.rawValue)")

@@ -100,7 +100,7 @@ class ViewController: UIViewController {
         startButton.addTarget(self, action: #selector(startBtnTapped), for: .touchUpInside)
         
         // Dismiss keyboard when tapping outside
-        let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         self.view.addGestureRecognizer(tap)
     }
     
@@ -181,6 +181,10 @@ class ViewController: UIViewController {
         } else {
             startStreaming()
         }
+    }
+    
+    @objc private func dismissKeyboard() {
+        self.view.endEditing(true)
     }
     
     private func startStreaming() {
