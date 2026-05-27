@@ -20,5 +20,4 @@ targets:
 packages:
   WebRTC:
     repository: https://github.com/stasel/WebRTC.git
-    requirement:
-      range: 96.0.0..<120.0.0
+    majorVersion: 104
