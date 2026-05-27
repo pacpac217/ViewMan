@@ -20,6 +20,13 @@ jobs:
         run: |
           xcodegen generate
 
+      - name: Resolve Package Dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project SimpleScreenStreamer.xcodeproj \
+            -scheme SimpleScreenStreamer \
+            -derivedDataPath build
+
       - name: Build iOS Application (Unsigned for TrollStore)
         run: |
           xcodebuild -project SimpleScreenStreamer.xcodeproj \
