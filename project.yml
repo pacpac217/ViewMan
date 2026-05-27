@@ -16,7 +16,7 @@ targets:
         NSMicrophoneUsageDescription: "Ứng dụng cần Microphone để truyền phát âm thanh nếu cần."
     dependencies:
       - package: WebRTC
-        packageProduct: WebRTC
+        product: WebRTC
 packages:
   WebRTC:
     url: https://github.com/stasel/WebRTC.git

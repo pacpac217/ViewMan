@@ -86,7 +86,8 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         let height = CVPixelBufferGetHeight(pixelBuffer)
         let timeStampNs = Int64(Date().timeIntervalSince1970 * 1_000_000_000)
         
-        let rtcFrame = RTCVideoFrame(imageBuffer: pixelBuffer, rotation: ._0, timeStampNs: timeStampNs)
+        let rtcPixelBuffer = RTCCVPixelBuffer(pixelBuffer: pixelBuffer)
+        let rtcFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: ._0, timeStampNs: timeStampNs)
         
         self.videoSource?.adaptOutputFormat(toWidth: Int32(width), height: Int32(height), fps: 30)
         self.videoSource?.capturer(RTCVideoCapturer(), didCapture: rtcFrame)
