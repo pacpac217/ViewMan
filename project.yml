@@ -19,5 +19,5 @@ targets:
         packageProduct: WebRTC
 packages:
   WebRTC:
-    repository: https://github.com/stasel/WebRTC.git
-    majorVersion: 104
+    url: https://github.com/stasel/WebRTC.git
+    from: 104.0.0
