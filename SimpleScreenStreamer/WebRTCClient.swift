@@ -1,6 +1,12 @@
 import Foundation
 import WebRTC
 
+class ScreenCapturer: RTCVideoCapturer {
+    init(delegate: RTCVideoCapturerDelegate) {
+        super.init(delegate: delegate)
+    }
+}
+
 class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     
     private static let factory: RTCPeerConnectionFactory = {
@@ -13,10 +19,10 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     private var peerConnection: RTCPeerConnection?
     private var videoSource: RTCVideoSource?
     private var videoTrack: RTCVideoTrack?
-    private var videoCapturer: RTCVideoCapturer?
+    private var videoCapturer: ScreenCapturer?
     
     var roomCode: String = ""
-    var onConnectionStateChange: ((RTCPeerConnectionState) -> Void)?
+    var onConnectionStateChange: ((RTCIceConnectionState) -> Void)?
     var onLog: ((String) -> Void)?
     
     private var signalingTimer: Timer?
@@ -26,7 +32,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         super.init()
         self.videoSource = Self.factory.videoSource()
         self.videoTrack = Self.factory.videoTrack(with: self.videoSource!, trackId: "video0")
-        self.videoCapturer = RTCVideoCapturer(delegate: self.videoSource!)
+        self.videoCapturer = ScreenCapturer(delegate: self.videoSource!)
     }
     
     func start(roomCode: String) {
@@ -208,7 +214,18 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {}
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
-        self.onLog?("ICE Connection State: \(newState.rawValue)")
+        DispatchQueue.main.async {
+            self.onLog?("Trạng thái ICE: \(newState.rawValue)")
+            self.onConnectionStateChange?(newState)
+            switch newState {
+            case .connected, .completed:
+                self.onLog?("Đã kết nối trực tiếp P2P với Chrome!")
+            case .disconnected, .failed:
+                self.onLog?("Đã ngắt kết nối.")
+            default:
+                break
+            }
+        }
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceGatheringState) {}
