@@ -1,12 +1,6 @@
 import Foundation
 import WebRTC
 
-class ScreenCapturer: RTCVideoCapturer {
-    init(delegate: RTCVideoCapturerDelegate) {
-        super.init(delegate: delegate)
-    }
-}
-
 class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     
     private static let factory: RTCPeerConnectionFactory = {
@@ -19,7 +13,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     private var peerConnection: RTCPeerConnection?
     private var videoSource: RTCVideoSource?
     private var videoTrack: RTCVideoTrack?
-    private var videoCapturer: ScreenCapturer?
+    private var videoCapturer: RTCCameraVideoCapturer?
     
     var roomCode: String = ""
     var onConnectionStateChange: ((RTCIceConnectionState) -> Void)?
@@ -32,7 +26,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         super.init()
         self.videoSource = Self.factory.videoSource()
         self.videoTrack = Self.factory.videoTrack(with: self.videoSource!, trackId: "video0")
-        self.videoCapturer = ScreenCapturer(delegate: self.videoSource!)
+        self.videoCapturer = RTCCameraVideoCapturer(delegate: self.videoSource!)
     }
     
     func start(roomCode: String) {

@@ -87,7 +87,7 @@ class ViewController: UIViewController {
         setupUI()
         
         // Generate a random room code by default
-        let randomCode = String(format: "%06d", arc4random_uniform(1000000))
+        let randomCode = String(format: "%06d", Int.random(in: 0...999999))
         roomCodeTextField.text = randomCode
         
         self.webRTCClient = WebRTCClient()
@@ -209,7 +209,7 @@ class ViewController: UIViewController {
         RPScreenRecorder.shared().startCapture(handler: { [weak self] (sampleBuffer, sampleBufferType, error) in
             guard let self = self, error == nil else { return }
             if sampleBufferType == .video {
-                if let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
+                if let pixelBuffer = sampleBuffer.imageBuffer {
                     self.webRTCClient?.sendFrame(pixelBuffer)
                 }
             }
