@@ -1,6 +1,7 @@
 import UIKit
 import ReplayKit
 import CoreMedia
+import CoreVideo
 import WebRTC
 import AVFoundation
 

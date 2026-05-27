@@ -198,19 +198,32 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     
     // MARK: - RTCPeerConnectionDelegate
     
-    func peerConnection(_ peerConnection: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {}
+    // 1. Signaling State
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {
+        self.onLog?("Trạng thái Signaling thay đổi: \(stateChanged.rawValue)")
+    }
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChangeSignalingState stateChanged: RTCSignalingState) {
+        self.onLog?("Trạng thái Signaling thay đổi (didChangeSignalingState): \(stateChanged.rawValue)")
+    }
     
+    // 2. Stream handling
     func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
         self.onLog?("Đã thêm stream.")
     }
-    
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove stream: RTCMediaStream) {}
     
     func peerConnectionShouldTriggerIceRestart(_ peerConnection: RTCPeerConnection) -> Bool { return true }
-    
     func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {}
     
+    // 3. ICE Connection State
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
+        self.handleIceConnectionStateChange(newState)
+    }
     func peerConnection(_ peerConnection: RTCPeerConnection, didChangeIceConnectionState newState: RTCIceConnectionState) {
+        self.handleIceConnectionStateChange(newState)
+    }
+    
+    private func handleIceConnectionStateChange(_ newState: RTCIceConnectionState) {
         DispatchQueue.main.async {
             self.onLog?("Trạng thái ICE: \(newState.rawValue)")
             self.onConnectionStateChange?(newState)
@@ -225,9 +238,19 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         }
     }
     
+    // 4. ICE Gathering State
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceGatheringState) {}
     func peerConnection(_ peerConnection: RTCPeerConnection, didChangeIceGatheringState newState: RTCIceGatheringState) {}
     
+    // 5. Peer Connection State
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCPeerConnectionState) {
+        self.handlePeerConnectionStateChange(newState)
+    }
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChangeConnectionState newState: RTCPeerConnectionState) {
+        self.handlePeerConnectionStateChange(newState)
+    }
+    
+    private func handlePeerConnectionStateChange(_ newState: RTCPeerConnectionState) {
         DispatchQueue.main.async {
             switch newState {
             case .connected:
@@ -240,8 +263,15 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         }
     }
     
-    
+    // 6. ICE Candidates
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
+        self.handleGeneratedCandidate(candidate)
+    }
+    func peerConnection(_ peerConnection: RTCPeerConnection, didGenerateIceCandidate candidate: RTCIceCandidate) {
+        self.handleGeneratedCandidate(candidate)
+    }
+    
+    private func handleGeneratedCandidate(_ candidate: RTCIceCandidate) {
         let payload: [String: Any] = [
             "candidate": candidate.sdp,
             "sdpMid": candidate.sdpMid ?? "",
@@ -254,6 +284,11 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         }
     }
     
+    // 7. ICE Candidate Removal
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove candidates: [RTCIceCandidate]) {}
+    func peerConnection(_ peerConnection: RTCPeerConnection, didRemoveIceCandidates candidates: [RTCIceCandidate]) {}
+    
+    // 8. Data Channel
     func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {}
+    func peerConnection(_ peerConnection: RTCPeerConnection, didOpenDataChannel dataChannel: RTCDataChannel) {}
 }
