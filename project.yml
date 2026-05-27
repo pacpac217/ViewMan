@@ -6,7 +6,10 @@ targets:
     type: application
     platform: iOS
     deploymentTarget: "14.0"
-    sources: [SimpleScreenStreamer]
+    sources:
+      - path: SimpleScreenStreamer
+        excludes:
+          - Info.plist
     info:
       path: SimpleScreenStreamer/Info.plist
       properties:

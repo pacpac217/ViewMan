@@ -1,5 +1,8 @@
 import Foundation
 import WebRTC
+import CoreMedia
+import CoreVideo
+import AVFoundation
 
 class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     
@@ -93,7 +96,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         
         self.videoSource?.adaptOutputFormat(toWidth: Int32(width), height: Int32(height), fps: 30)
         if let capturer = self.videoCapturer, let delegate = self.videoSource as? RTCVideoCapturerDelegate {
-            delegate.capturer(capturer, didCapture: rtcFrame)
+            delegate.capturer(capturer as RTCVideoCapturer, didCapture: rtcFrame)
         }
     }
     
