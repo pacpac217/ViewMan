@@ -72,7 +72,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
                 }
                 
                 self.onLog?("Đã lưu local SDP. Đang gửi lên ntfy.sh...")
-                self.sendSignalingMessage(type: "offer", data: sdp.sdpDescription)
+                self.sendSignalingMessage(type: "offer", data: sdp.sdp)
                 self.startListeningForSignaling()
             })
         })
@@ -95,7 +95,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         let rtcFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: ._0, timeStampNs: timeStampNs)
         
         self.videoSource?.adaptOutputFormat(toWidth: Int32(width), height: Int32(height), fps: 30)
-        if let capturer = self.videoCapturer, let delegate = self.videoSource as? RTCVideoCapturerDelegate {
+        if let capturer = self.videoCapturer, let delegate = self.videoSource {
             delegate.capturer(capturer as RTCVideoCapturer, didCapture: rtcFrame)
         }
     }
