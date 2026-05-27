@@ -1,0 +1,45 @@
+name: Build SimpleScreenStreamer
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build iOS App
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Homebrew & Install XcodeGen
+        run: |
+          brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: |
+          xcodegen generate
+
+      - name: Build iOS Application (Unsigned for TrollStore)
+        run: |
+          xcodebuild -project SimpleScreenStreamer.xcodeproj \
+            -scheme SimpleScreenStreamer \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            clean build
+
+      - name: Package App into IPA
+        run: |
+          mkdir -p Payload
+          cp -r build/Build/Products/Release-iphoneos/SimpleScreenStreamer.app Payload/
+          zip -r SimpleScreenStreamer.ipa Payload
+          
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SimpleScreenStreamer-TrollStore
+          path: SimpleScreenStreamer.ipa

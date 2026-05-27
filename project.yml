@@ -1,0 +1,24 @@
+name: SimpleScreenStreamer
+options:
+  bundleIdPrefix: com.example
+targets:
+  SimpleScreenStreamer:
+    type: application
+    platform: iOS
+    deploymentTarget: "14.0"
+    sources: [SimpleScreenStreamer]
+    info:
+      path: SimpleScreenStreamer/Info.plist
+      properties:
+        UILaunchStoryboardName: LaunchScreen
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSMicrophoneUsageDescription: "Ứng dụng cần Microphone để truyền phát âm thanh nếu cần."
+    dependencies:
+      - package: WebRTC
+        packageProduct: WebRTC
+packages:
+  WebRTC:
+    repository: https://github.com/stasel/WebRTC.git
+    requirement:
+      range: 96.0.0..<120.0.0
