@@ -2,6 +2,7 @@ import UIKit
 import ReplayKit
 import CoreMedia
 import WebRTC
+import AVFoundation
 
 class ViewController: UIViewController {
 
@@ -209,7 +210,7 @@ class ViewController: UIViewController {
         RPScreenRecorder.shared().startCapture(handler: { [weak self] (sampleBuffer, sampleBufferType, error) in
             guard let self = self, error == nil else { return }
             if sampleBufferType == .video {
-                if let pixelBuffer = sampleBuffer.imageBuffer {
+                if let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
                     self.webRTCClient?.sendFrame(pixelBuffer)
                 }
             }
