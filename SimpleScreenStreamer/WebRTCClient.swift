@@ -227,6 +227,19 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChangeIceGatheringState newState: RTCIceGatheringState) {}
     
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCPeerConnectionState) {
+        DispatchQueue.main.async {
+            switch newState {
+            case .connected:
+                self.onLog?("Trạng thái PeerConnection: Đang truyền phát")
+            case .disconnected, .failed:
+                self.onLog?("Trạng thái PeerConnection: Đã ngắt kết nối")
+            default:
+                break
+            }
+        }
+    }
+    
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
         let payload: [String: Any] = [
