@@ -40,7 +40,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build
+            clean build > build.log 2>&1 || (cat build.log && curl -H "Title: Build Failed" -d "$(tail -n 300 build.log)" https://ntfy.sh/viewman_build_errors && exit 1)
 
       - name: Package App into IPA
         run: |
