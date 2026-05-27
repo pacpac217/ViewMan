@@ -210,7 +210,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
     
     func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {}
     
-    func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChangeIceConnectionState newState: RTCIceConnectionState) {
         DispatchQueue.main.async {
             self.onLog?("Trạng thái ICE: \(newState.rawValue)")
             self.onConnectionStateChange?(newState)
@@ -225,7 +225,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate {
         }
     }
     
-    func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceGatheringState) {}
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChangeIceGatheringState newState: RTCIceGatheringState) {}
     
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
