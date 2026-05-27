@@ -195,8 +195,13 @@ class WebRTCClient: NSObject, RTCPeerConnectionFactoryDelegate, RTCPeerConnectio
     // MARK: - RTCPeerConnectionDelegate
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {}
-    func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {}
+    
+    func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
+        self.onLog?("Đã thêm stream mới (không dùng).")
+    }
+    
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove stream: RTCMediaStream) {}
+    
     func peerConnectionShouldTriggerIceRestart(_ peerConnection: RTCPeerConnection) -> Bool { return true }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
@@ -232,4 +237,10 @@ class WebRTCClient: NSObject, RTCPeerConnectionFactoryDelegate, RTCPeerConnectio
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove candidates: [RTCIceCandidate]) {}
     func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {}
+    
+    func peerConnection(_ peerConnection: RTCPeerConnection, didStartReceivingOn anchor: RTCAudioSource) {}
+    
+    // Required modern Unified Plan methods
+    func peerConnection(_ peerConnection: RTCPeerConnection, didAdd rtpReceiver: RTCRtpReceiver, streams mediaStreams: [RTCMediaStream]) {}
+    func peerConnection(_ peerConnection: RTCPeerConnection, didRemove rtpReceiver: RTCRtpReceiver) {}
 }
